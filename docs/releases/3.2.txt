@@ -71,6 +71,7 @@ Minor features
 
 * :attr:`.ModelAdmin.search_fields` now allows searching against quoted phrases
   with spaces.
+* added ``model`` and ``model_admin`` to ``app_list`` context
 
 :mod:`django.contrib.admindocs`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

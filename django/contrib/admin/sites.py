@@ -409,10 +409,10 @@ class AdminSite:
         request.current_app = self.name
         return LoginView.as_view(**defaults)(request)
 
-    def _build_app_dict(self, request, label=None):
+    def get_app_dict(self, request, label=None):
         """
-        Build the app dictionary. The optional `label` parameter filters models
-        of a specific app.
+        Return the app dictionary of the installed apps that have been registered in this site.
+        The optional `label` parameter filters models of a specific app.
         """
         app_dict = {}
 
@@ -440,6 +440,8 @@ class AdminSite:
 
             info = (app_label, model._meta.model_name)
             model_dict = {
+                'model': model,
+                'model_admin': model_admin,
                 'name': capfirst(model._meta.verbose_name_plural),
                 'object_name': model._meta.object_name,
                 'perms': perms,
@@ -482,7 +484,7 @@ class AdminSite:
         Return a sorted list of all the installed apps that have been
         registered in this site.
         """
-        app_dict = self._build_app_dict(request)
+        app_dict = self.get_app_dict(request)
 
         # Sort the apps alphabetically.
         app_list = sorted(app_dict.values(), key=lambda x: x['name'].lower())
@@ -513,7 +515,7 @@ class AdminSite:
         return TemplateResponse(request, self.index_template or 'admin/index.html', context)
 
     def app_index(self, request, app_label, extra_context=None):
-        app_dict = self._build_app_dict(request, app_label)
+        app_dict = self.get_app_dict(request, app_label)
         if not app_dict:
             raise Http404('The requested admin page does not exist.')
         # Sort the models alphabetically within each app.
